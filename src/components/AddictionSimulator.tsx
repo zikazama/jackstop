@@ -27,7 +27,7 @@ const AddictionSimulator: React.FC<AddictionSimulatorProps> = ({ onBack, updateP
     initialBalance: 10000000,
     dailyLoss: 100000, // 100rb per hari awal
     timeSpent: 1, // jam per hari
-    stressLevel: 20,
+    stressLevel: 0,
     familyRelation: 100,
     workPerformance: 100,
     mentalHealth: 100,
@@ -50,13 +50,13 @@ const AddictionSimulator: React.FC<AddictionSimulatorProps> = ({ onBack, updateP
       newState.dailyLoss = todayLoss;
       
       // Time spent gambling increases
-      newState.timeSpent = Math.min(16, prev.timeSpent * 1.05);
+      newState.timeSpent = Math.round(Math.min(16, prev.timeSpent * 1.05) * 10) / 10;
       
       // Deteriorating conditions
-      newState.stressLevel = Math.min(100, prev.stressLevel + 2);
-      newState.familyRelation = Math.max(0, prev.familyRelation - 1.5);
-      newState.workPerformance = Math.max(0, prev.workPerformance - 1);
-      newState.mentalHealth = Math.max(0, prev.mentalHealth - 1.2);
+      newState.stressLevel = Math.round(Math.min(100, prev.stressLevel + 2));
+      newState.familyRelation = Math.round(Math.max(0, prev.familyRelation - 1.5));
+      newState.workPerformance = Math.round(Math.max(0, prev.workPerformance - 1));
+      newState.mentalHealth = Math.round(Math.max(0, prev.mentalHealth - 1.2));
       
       // Events based on conditions
       const events = [...prev.events];
@@ -116,7 +116,7 @@ const AddictionSimulator: React.FC<AddictionSimulatorProps> = ({ onBack, updateP
       initialBalance: 10000000,
       dailyLoss: 100000,
       timeSpent: 1,
-      stressLevel: 20,
+      stressLevel: 0,
       familyRelation: 100,
       workPerformance: 100,
       mentalHealth: 100,
@@ -151,13 +151,12 @@ const AddictionSimulator: React.FC<AddictionSimulatorProps> = ({ onBack, updateP
     }).format(amount);
   };
 
-  const getHealthColor = (value: number) => {
-    if (value >= 70) return 'text-green-400';
-    if (value >= 40) return 'text-yellow-400';
-    return 'text-red-400';
+  const getStressBg = (value: number) => {
+    if (value >= 70) return 'bg-red-600';
+    if (value >= 40) return 'bg-yellow-600';
+    return 'bg-green-600';
   };
-
-  const getHealthBg = (value: number) => {
+  const getPositiveBg = (value: number) => {
     if (value >= 70) return 'bg-green-600';
     if (value >= 40) return 'bg-yellow-600';
     return 'bg-red-600';
@@ -167,38 +166,38 @@ const AddictionSimulator: React.FC<AddictionSimulatorProps> = ({ onBack, updateP
     <div className="min-h-screen p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center mb-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start mb-6 text-center sm:text-left space-y-2 sm:space-y-0">
           <button
             onClick={onBack}
-            className="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors mr-4"
+            className="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-3 md:px-4 py-2 rounded-lg transition-colors mb-2 sm:mb-0 sm:mr-4 w-full sm:w-auto justify-center"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span>Kembali</span>
+            <span className="text-sm md:text-base">Kembali</span>
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Simulator Kecanduan Judi</h1>
-            <p className="text-orange-300">Lihat bagaimana kecanduan judi berkembang dari hari ke hari</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">Simulator Kecanduan Judi</h1>
+            <p className="text-orange-300 text-sm md:text-base">Lihat bagaimana kecanduan judi berkembang dari hari ke hari</p>
           </div>
         </div>
 
         {/* Warning */}
-        <div className="bg-red-600 rounded-lg p-4 mb-6 border-2 border-red-400">
-          <div className="flex items-center space-x-3">
-            <AlertTriangle className="w-8 h-8 text-white" />
+        <div className="bg-red-600 rounded-lg p-3 md:p-4 mb-4 md:mb-6 border-2 border-red-400">
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
+            <AlertTriangle className="w-6 h-6 md:w-8 md:h-8 text-white mb-2 sm:mb-0" />
             <div>
-              <h3 className="text-white font-bold text-lg">Simulasi Berdasarkan Data Nyata</h3>
-              <p className="text-white">Simulator ini menunjukkan pola kecanduan judi yang dialami jutaan orang di dunia</p>
+              <h3 className="text-white font-bold text-base md:text-lg">Simulasi Berdasarkan Data Nyata</h3>
+              <p className="text-white text-xs md:text-base">Simulator ini menunjukkan pola kecanduan judi yang dialami jutaan orang di dunia</p>
             </div>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="bg-black bg-opacity-50 rounded-lg p-4 mb-6 border border-gray-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+        <div className="bg-black bg-opacity-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6 border border-gray-700">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               <button
                 onClick={isRunning ? stopSimulation : startSimulation}
-                className={`px-6 py-2 rounded-lg font-bold transition-colors ${
+                className={`w-full sm:w-auto px-4 md:px-6 py-2 rounded-lg font-bold transition-colors text-sm md:text-base ${
                   isRunning 
                     ? 'bg-red-600 hover:bg-red-700 text-white' 
                     : 'bg-green-600 hover:bg-green-700 text-white'
@@ -206,21 +205,19 @@ const AddictionSimulator: React.FC<AddictionSimulatorProps> = ({ onBack, updateP
               >
                 {isRunning ? 'Stop' : 'Mulai Simulasi'}
               </button>
-              
               <button
                 onClick={resetSimulation}
-                className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-bold transition-colors"
+                className="w-full sm:w-auto px-4 md:px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-bold transition-colors text-sm md:text-base"
               >
                 Reset
               </button>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <span className="text-white">Kecepatan:</span>
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+              <span className="text-white text-sm md:text-base">Kecepatan:</span>
               <select
                 value={speed}
                 onChange={(e) => setSpeed(Number(e.target.value))}
-                className="bg-gray-700 text-white px-3 py-1 rounded"
+                className="bg-gray-700 text-white px-2 md:px-3 py-1 rounded text-sm md:text-base"
               >
                 <option value={2000}>Lambat</option>
                 <option value={1000}>Normal</option>
@@ -231,143 +228,137 @@ const AddictionSimulator: React.FC<AddictionSimulatorProps> = ({ onBack, updateP
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* Status Panel */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {/* Day Counter */}
-            <div className="bg-black bg-opacity-50 rounded-lg p-6 border border-gray-700">
-              <div className="flex items-center space-x-3 mb-4">
-                <Clock className="w-6 h-6 text-blue-400" />
-                <h2 className="text-2xl font-bold text-white">Hari ke-{simulation.day}</h2>
+            <div className="bg-black bg-opacity-50 rounded-lg p-4 md:p-6 border border-gray-700">
+              <div className="flex items-center space-x-2 md:space-x-3 mb-2 md:mb-4">
+                <Clock className="w-5 h-5 md:w-6 md:h-6 text-blue-400" />
+                <h2 className="text-lg md:text-2xl font-bold text-white">Hari ke-{simulation.day}</h2>
               </div>
-              <p className="text-gray-300">
-                Waktu judi hari ini: <span className="text-red-400 font-bold">{simulation.timeSpent.toFixed(1)} jam</span>
+              <p className="text-gray-300 text-sm md:text-base">
+                Waktu judi hari ini: <span className="text-red-400 font-bold">{Math.round(simulation.timeSpent)} jam</span>
               </p>
             </div>
 
             {/* Financial Status */}
-            <div className="bg-black bg-opacity-50 rounded-lg p-6 border border-gray-700">
-              <div className="flex items-center space-x-3 mb-4">
-                <DollarSign className="w-6 h-6 text-green-400" />
-                <h2 className="text-xl font-bold text-white">Status Keuangan</h2>
+            <div className="bg-black bg-opacity-50 rounded-lg p-4 md:p-6 border border-gray-700">
+              <div className="flex items-center space-x-2 md:space-x-3 mb-2 md:mb-4">
+                <DollarSign className="w-5 h-5 md:w-6 md:h-6 text-green-400" />
+                <h2 className="text-lg md:text-2xl font-bold text-white">Saldo: {formatCurrency(simulation.balance)}</h2>
               </div>
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-gray-300">Saldo Tersisa</span>
-                    <span className="text-white font-bold">{formatCurrency(simulation.balance)}</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all ${
-                        simulation.balance / simulation.initialBalance > 0.5 ? 'bg-green-600' :
-                        simulation.balance / simulation.initialBalance > 0.2 ? 'bg-yellow-600' : 'bg-red-600'
-                      }`}
-                      style={{ width: `${(simulation.balance / simulation.initialBalance) * 100}%` }}
-                    ></div>
+              <p className="text-gray-300 text-sm md:text-base">
+                Kerugian hari ini: <span className="text-red-400 font-bold">{formatCurrency(simulation.dailyLoss)}</span>
+              </p>
+              {/* Saldo Bar Chart */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-xs md:text-sm text-gray-300 mb-2">
+                  <span>Saldo Saat Ini</span>
+                  <span>{Math.round((simulation.balance / simulation.initialBalance) * 100)}%</span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-3 md:h-4">
+                  <div 
+                    className="bg-gradient-to-r from-green-500 to-green-400 h-3 md:h-4 rounded-full transition-all duration-500 flex items-center justify-center"
+                    style={{ 
+                      width: `${Math.max(0, Math.min(100, (simulation.balance / simulation.initialBalance) * 100))}%` 
+                    }}
+                  >
+                    {simulation.balance > 0 && (
+                      <span className="text-white text-xs font-bold px-2">
+                        {formatCurrency(simulation.balance)}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="text-sm text-gray-400">
-                  Kerugian hari ini: <span className="text-red-400">{formatCurrency(simulation.dailyLoss)}</span>
-                </div>
-                <div className="text-sm text-gray-400">
-                  Total kerugian: <span className="text-red-400">{formatCurrency(simulation.initialBalance - simulation.balance)}</span>
+                <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>Rp 0</span>
+                  <span>{formatCurrency(simulation.initialBalance)}</span>
                 </div>
               </div>
             </div>
 
-            {/* Health Indicators */}
-            <div className="bg-black bg-opacity-50 rounded-lg p-6 border border-gray-700">
-              <div className="flex items-center space-x-3 mb-4">
-                <Brain className="w-6 h-6 text-purple-400" />
-                <h2 className="text-xl font-bold text-white">Indikator Kesehatan</h2>
+            {/* Health Status */}
+            <div className="bg-black bg-opacity-50 rounded-lg p-4 md:p-6 border border-gray-700">
+              <div className="flex items-center space-x-2 md:space-x-3 mb-2 md:mb-4">
+                <Brain className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
+                <h2 className="text-lg md:text-2xl font-bold text-white">Kesehatan Mental</h2>
               </div>
-              <div className="space-y-4">
-                {[
-                  { label: 'Tingkat Stress', value: simulation.stressLevel, reverse: true },
-                  { label: 'Hubungan Keluarga', value: simulation.familyRelation, reverse: false },
-                  { label: 'Performa Kerja', value: simulation.workPerformance, reverse: false },
-                  { label: 'Kesehatan Mental', value: simulation.mentalHealth, reverse: false }
-                ].map((indicator, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-gray-300">{indicator.label}</span>
-                      <span className={getHealthColor(indicator.reverse ? 100 - indicator.value : indicator.value)}>
-                        {indicator.value.toFixed(0)}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full transition-all ${
-                          getHealthBg(indicator.reverse ? 100 - indicator.value : indicator.value)
-                        }`}
-                        style={{ width: `${indicator.value}%` }}
-                      ></div>
-                    </div>
+              <div className="space-y-3 md:space-y-4">
+                {/* Stres Bar */}
+                <div>
+                  <div className="flex items-center justify-between text-xs md:text-sm text-gray-300 mb-1">
+                    <span>Stres</span>
+                    <span>{simulation.stressLevel}/100</span>
                   </div>
-                ))}
+                  <div className="w-full bg-gray-700 rounded-full h-2 md:h-3">
+                    <div 
+                      className={`h-2 md:h-3 rounded-full transition-all duration-500 ${getStressBg(simulation.stressLevel)}`}
+                      style={{ width: `${simulation.stressLevel}%` }}
+                    ></div>
+                  </div>
+                </div>
+                
+                {/* Mental Health Bar */}
+                <div>
+                  <div className="flex items-center justify-between text-xs md:text-sm text-gray-300 mb-1">
+                    <span>Mental</span>
+                    <span>{simulation.mentalHealth}/100</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2 md:h-3">
+                    <div 
+                      className={`h-2 md:h-3 rounded-full transition-all duration-500 ${getPositiveBg(simulation.mentalHealth)}`}
+                      style={{ width: `${simulation.mentalHealth}%` }}
+                    ></div>
+                  </div>
+                </div>
+                
+                {/* Family Relation Bar */}
+                <div>
+                  <div className="flex items-center justify-between text-xs md:text-sm text-gray-300 mb-1">
+                    <span>Keluarga</span>
+                    <span>{simulation.familyRelation}/100</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2 md:h-3">
+                    <div 
+                      className={`h-2 md:h-3 rounded-full transition-all duration-500 ${getPositiveBg(simulation.familyRelation)}`}
+                      style={{ width: `${simulation.familyRelation}%` }}
+                    ></div>
+                  </div>
+                </div>
+                
+                {/* Work Performance Bar */}
+                <div>
+                  <div className="flex items-center justify-between text-xs md:text-sm text-gray-300 mb-1">
+                    <span>Kerja</span>
+                    <span>{simulation.workPerformance}/100</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2 md:h-3">
+                    <div 
+                      className={`h-2 md:h-3 rounded-full transition-all duration-500 ${getPositiveBg(simulation.workPerformance)}`}
+                      style={{ width: `${simulation.workPerformance}%` }}
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Events Timeline */}
-          <div className="bg-black bg-opacity-50 rounded-lg p-6 border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center">
-              <TrendingDown className="w-6 h-6 mr-2" />
-              Timeline Kehancuran
-            </h2>
-            
-            {simulation.events.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-400">Mulai simulasi untuk melihat timeline</p>
-              </div>
-            ) : (
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {simulation.events.map((event, index) => (
-                  <div key={index} className="bg-red-900 bg-opacity-30 p-4 rounded-lg border border-red-800">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <p className="text-white">{event}</p>
-                        <p className="text-red-400 text-sm mt-1">Hari ke-{
-                          event.includes("berbohong") ? 7 :
-                          event.includes("Performa kerja") ? 14 :
-                          event.includes("meminjam") ? 21 :
-                          event.includes("Pertengkaran") ? 30 :
-                          event.includes("kartu kredit") ? 45 :
-                          event.includes("pekerjaan") ? 60 :
-                          simulation.day
-                        }</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Final Warning */}
-            {(simulation.balance <= 0 || simulation.day >= 365) && (
-              <div className="mt-6 bg-red-600 p-4 rounded-lg border-2 border-red-400">
-                <h3 className="text-white font-bold text-lg mb-2">🚨 SIMULASI BERAKHIR</h3>
-                <p className="text-white">
-                  {simulation.balance <= 0 
-                    ? "Semua uang habis! Ini adalah realitas yang dialami jutaan penjudi."
-                    : "Setahun berlalu dengan kehancuran bertahap. Kecanduan judi menghancurkan hidup secara perlahan tapi pasti."
-                  }
-                </p>
-              </div>
-            )}
-
-            {/* Educational Notes */}
-            <div className="mt-6 bg-blue-900 bg-opacity-50 p-4 rounded-lg border border-blue-600">
-              <h3 className="text-blue-400 font-bold mb-2">💡 Fakta Penting</h3>
-              <ul className="text-white text-sm space-y-1">
-                <li>• Kecanduan judi berkembang secara bertahap</li>
-                <li>• Dampaknya tidak hanya finansial, tapi juga sosial dan mental</li>
-                <li>• Semakin lama bermain, semakin sulit untuk berhenti</li>
-                <li>• Bantuan profesional diperlukan untuk pemulihan</li>
-              </ul>
+          {/* Event List */}
+          <div className="bg-black bg-opacity-50 rounded-lg p-4 md:p-6 border border-gray-700 flex flex-col">
+            <div className="flex items-center space-x-2 md:space-x-3 mb-2 md:mb-4">
+              <TrendingDown className="w-5 h-5 md:w-6 md:h-6 text-red-400" />
+              <h2 className="text-lg md:text-2xl font-bold text-white">Peristiwa Penting</h2>
             </div>
+            {simulation.events.length === 0 ? (
+              <div className="text-gray-400 text-sm md:text-base text-center mt-4">Belum ada peristiwa besar</div>
+            ) : (
+              <ul className="list-disc pl-5 space-y-1 md:space-y-2 text-sm md:text-base">
+                {simulation.events.map((event, idx) => (
+                  <li key={idx} className="text-white">{event}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
