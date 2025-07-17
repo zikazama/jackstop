@@ -44,40 +44,62 @@ export const spinSlots = (): number[] => {
   return result;
 };
 
+// Fungsi dengan manipulasi untuk memberikan kemenangan setelah 10 kekalahan
+export const spinSlotsWithManipulation = (lossStreak: number): number[] => {
+  // Jika sudah kalah 10x berturut-turut, berikan kemenangan
+  if (lossStreak >= 10) {
+    // 80% chance untuk memberikan kemenangan
+    if (Math.random() < 0.8) {
+      // Berikan jackpot atau kemenangan besar
+      // Pilih kemenangan berdasarkan probabilitas
+      const random = Math.random();
+      if (random < 0.1) {
+        return [6, 6, 6]; // 10% chance jackpot
+      } else if (random < 0.3) {
+        return [5, 5, 5]; // 20% chance 50x
+      } else if (random < 0.6) {
+        return [4, 4, 4]; // 30% chance 25x
+      } else {
+        return [0, 0, 0]; // 40% chance 10x
+      }
+    }
+  }
+  
+  // Jika tidak, gunakan logika normal
+  return spinSlots();
+};
+
 export const calculateWin = (result: number[], bet: number): number => {
-  // Cek apakah semua simbol sama
+  // Cek apakah semua simbol sama (3 simbol sama)
   if (result[0] === result[1] && result[1] === result[2]) {
     const symbol = result[0];
     
-    // Tabel pembayaran
+    // Tabel pembayaran baru
     const payouts = {
-      6: 100, // 7️⃣ - jackpot
-      5: 50,  // 💎
-      4: 25,  // 🔔
-      7: 20,  // ⭐
-      3: 15,  // 🍇
-      2: 10,  // 🍊
-      1: 5,   // 🍋
-      0: 3    // 🍒
+      6: 100, // 7️⃣7️⃣7️⃣ - jackpot 100x
+      5: 50,  // 💎💎💎 - 50x
+      4: 25,  // 🔔🔔🔔 - 25x
+      0: 10,  // 🍒🍒🍒 - 10x
+      7: 5,   // ⭐⭐⭐ - 5x
+      3: 3,   // 🍇🍇🍇 - 3x
+      2: 2,   // 🍊🍊🍊 - 2x
+      1: 1    // 🍋🍋🍋 - 1x
     };
     
     return bet * (payouts[symbol as keyof typeof payouts] || 0);
   }
   
-  // Cek kombinasi khusus (sangat jarang)
-  const sortedResult = [...result].sort();
-  
-  // Tiga simbol berbeda tapi berurutan (bonus kecil)
-  if (sortedResult[0] + 1 === sortedResult[1] && sortedResult[1] + 1 === sortedResult[2]) {
-    return Math.floor(bet * 0.5); // 50% dari taruhan
-  }
-  
-  // Dua simbol sama (bonus sangat kecil)
+  // Cek 2 simbol sama (0.5x taruhan)
   if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
-    return Math.floor(bet * 0.1); // 10% dari taruhan
+    return Math.floor(bet * 0.5); // 0.5x taruhan
   }
   
   return 0; // Kalah
+};
+
+// Fungsi untuk menghitung kerugian (selalu sama dengan taruhan jika kalah)
+export const calculateLoss = (bet: number): number => {
+  return bet;
 };
 
 // Fungsi untuk menghitung house edge
