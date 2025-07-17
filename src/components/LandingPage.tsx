@@ -13,6 +13,18 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onNavigate, userProgress }) => {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  const handleAboutClick = () => {
+    scrollToTop();
+    onNavigate('about');
+  };
+
   const dangers = [
     {
       icon: <TrendingDown className="w-8 h-8 text-red-400" />,
@@ -265,7 +277,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onNavigate, user
         {/* Footer */}
         <div className="text-center py-8 border-t border-red-800">
           <button
-            onClick={() => onNavigate('about')}
+            onClick={handleAboutClick}
             className="flex items-center space-x-2 mx-auto mb-4 text-blue-400 hover:text-blue-300"
           >
             <Info className="w-5 h-5" />
